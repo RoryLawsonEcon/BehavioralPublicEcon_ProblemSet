@@ -1,6 +1,27 @@
 /* EmpiricalPSet */
 cd "~/Desktop/Independent/BehavioralPublicProblemSet/analysis/" // put your own file path here
 
+
+
+* Replicate Table 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* REPLICATE TABLE 1 */
 global statfontsize = "footnotesize"
 global DemographicVars = "Income Education Age Male Liberal Party Environmentalist ConserveEnergy OwnHome"
