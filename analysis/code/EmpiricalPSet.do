@@ -121,6 +121,8 @@ use input/PreppedTESSData.dta, clear
 		ytitle("CFL relative price (\$)") ylabel(-10(5)10, glpattern(1)) xlabel(0(.1)1, nogrid) xtitle("CFL market share") ///
 		legend(order(2 "Treatment: Baseline and endline" 3 "Treatment: Endline only" 1 "Control") ///
 		pos(8) ring(0))  yline(0, lstyle(1))
+		
+	gr export "~/Dropbox/Apps/Overleaf/Behavioral Public Problem Set/fig3.png", replace
 	 
 	restore
 	
@@ -129,11 +131,10 @@ use input/PreppedTESSData.dta, clear
 	* Conditional Average Treatment Effect by Baseline WTP(smoothed out)
 	* Take regression results
 	
-//	reg WTP2 c.T#c.WTP1 WTP1_C*  [pweight=Weight], robust, if WTP1<=9&WTP1>=-9
+// xi: reg WTP2 T i.WTP1 [pweight = Weight] if WTP1smooth == 2.5
+//
+// di _b[T] + invttail(e(df_r),0.05)*_se[T]
 
-
-
-* Not exactly the same results - I think the CIs are constructed a little differently
 	preserve
 
 	gen tau = .
@@ -147,8 +148,9 @@ use input/PreppedTESSData.dta, clear
 		
 		xi: reg WTP2 T i.WTP1 [pweight = Weight] if WTP1smooth == `x'
 		replace tau = _b[T] if WTP1smooth == `x'
-		replace cilow = _b[T] - invttail(e(df_r),0.025)*_se[T] if WTP1smooth == `x'
-		replace cihigh = _b[T] + invttail(e(df_r),0.025)*_se[T] if WTP1smooth == `x'
+		* Construct 90% CI
+		replace cilow = _b[T] - invttail(e(df_r),0.05)*_se[T] if WTP1smooth == `x'
+		replace cihigh = _b[T] + invttail(e(df_r),0.05)*_se[T] if WTP1smooth == `x'
 		
 	}
 
@@ -161,10 +163,13 @@ use input/PreppedTESSData.dta, clear
 	yline(0, lpattern(1)) xline(0, lpattern(1)) legend(off) xtitle("Baseline relative WTP for CFL (\$)") ///
 	xlabel(-4(2)10,nogrid) ylabel(-2(2)8,glpattern(1))  ytitle("Change in WTP for CFL (\$)")
 	
+	gr export "~/Dropbox/Apps/Overleaf/Behavioral Public Problem Set/fig4.png", replace
+	
+	* get average marginal bias
+	
 	restore
 
 	
-				
 * Now figure 5
 	* CDF of savings beliefs by treatment status
 	preserve
@@ -175,7 +180,9 @@ use input/PreppedTESSData.dta, clear
 	tw	(line cum_savingsT Q7CFLSavings if Q7CFLSavings >= -10 & Q7CFLSavings <= 110, color(ebblue)) ///
 		(line cum_savingsC Q7CFLSavings if Q7CFLSavings >= -10 & Q7CFLSavings <= 110, color(cranberry) lpattern(dash)), ///
 		xlabel(-10(20)110, nogrid) xtitle("CFL savings belief (\$)") ylabel(0(.1)1,glpattern(1)) ytitle("Cumulative density")  ///
-		legend(order(2 "Treatment" 1 "Control") pos(5) ring(0))
+		legend(order(1 "Treatment" 2 "Control") pos(5) ring(0))
+		
+	gr export "~/Dropbox/Apps/Overleaf/Behavioral Public Problem Set/fig5.png", replace	
 	restore	
 	
 	
